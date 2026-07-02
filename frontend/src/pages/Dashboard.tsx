@@ -97,20 +97,20 @@ export default function Dashboard({ onOpenKitchen }: DashboardProps) {
         <title>${title}</title>
         <style>
           body { margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; color: #000; background: #fff; }
-          .receipt { width: 58mm; padding: 8px 6px; font-size: 13px; line-height: 1.4; font-weight: 600; }
-          .receipt h1 { font-size: 18px; margin: 0 0 6px; text-align: center; letter-spacing: 0.04em; font-weight: 700; }
+          .receipt { width: 58mm; padding: 8px 6px; font-size: 15px; line-height: 1.4; font-weight: 600; }
+          .receipt h1 { font-size: 20px; margin: 0 0 6px; text-align: center; letter-spacing: 0.04em; font-weight: 700; }
           .receipt .center { text-align: center; }
           .receipt .section { margin-bottom: 8px; }
-          .receipt .section strong { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; }
-          .receipt .section span { display: block; font-size: 12px; }
-          .print-item { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 4px; font-size: 12px; font-weight: 700; }
+          .receipt .section strong { display: block; margin-bottom: 4px; font-size: 14px; font-weight: 700; }
+          .receipt .section span { display: block; font-size: 14px; }
+          .print-item { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 4px; font-size: 14px; font-weight: 700; }
           .print-item span:last-child { min-width: 36px; text-align: right; }
           .print-divider { border-top: 1px dashed #000; margin: 8px 0; }
           .print-section { margin-top: 6px; }
           .print-section strong { font-size: 13px; font-weight: 800; }
-          .print-notes { font-size: 14px; margin-top: 5px; white-space: pre-wrap; font-weight: 700; line-height: 1.45; }
-          .footer { text-align: center; margin-top: 4px; font-size: 11px; font-weight: 700; }
-          .total-row { display: flex; justify-content: space-between; gap: 6px; font-weight: 700; margin-top: 6px; font-size: 13px; }
+          .print-notes { font-size: 16px; margin-top: 5px; white-space: pre-wrap; font-weight: 700; line-height: 1.45; }
+          .footer { text-align: center; margin-top: 4px; font-size: 13px; font-weight: 700; }
+          .total-row { display: flex; justify-content: space-between; gap: 6px; font-weight: 700; margin-top: 6px; font-size: 15px; }
           @page { size: 58mm auto; margin: 4mm; }
           @media print {
             body { margin: 0; }

@@ -23,6 +23,20 @@ const findAddressNumber = (address: any) => {
   return '';
 };
 
+const extractChangeAmount = (item: WooOrder) => {
+  const raw = item.meta_data?.find((meta) =>
+    /troco|change|valor.*troco|troco.*valor|cash.*change/i.test(String(meta.key))
+  )?.value;
+
+  if (raw == null) {
+    return undefined;
+  }
+
+  const text = String(raw).replace(',', '.').replace(/[^0-9.-]/g, '');
+  const amount = Number(text);
+  return Number.isFinite(amount) ? amount : undefined;
+};
+
 const formatWooAddress = (address?: WooAddress) => {
   if (!address) return '';
 
@@ -95,7 +109,8 @@ const createOrder = (item: WooOrder) => {
     status: deliveryStatus,
     wooStatus: item.status,
     date: item.date_created || '',
-    metaData: item.meta_data || []
+    metaData: item.meta_data || [],
+    changeAmount: extractChangeAmount(item)
   };
 };
 

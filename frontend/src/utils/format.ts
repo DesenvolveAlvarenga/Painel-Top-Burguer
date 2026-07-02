@@ -1,5 +1,10 @@
 export function formatCurrency(value: number) {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const v = Number(value || 0);
+  const fixed = v.toFixed(2); // garante duas casas
+  const [intPart, decPart] = fixed.split('.');
+  // formata milhares com ponto (BR)
+  const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return `R$ ${intFormatted},${decPart}`;
 }
 
 export function formatDate(date: string) {

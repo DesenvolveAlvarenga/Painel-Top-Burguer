@@ -20,4 +20,5 @@ export interface Order {
   wooStatus: string;
   date: string;
   metaData?: any[];
+  changeAmount?: number;
 }
