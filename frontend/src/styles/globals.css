@@ -750,4 +750,13 @@ button:hover {
   .kitchen-card {
     width: 100%;
   }
+
+  .detail-items li {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+
+  .detail-items li span {
+    display: block;
+  }
 }
