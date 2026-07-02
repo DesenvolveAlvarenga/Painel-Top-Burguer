@@ -39,7 +39,7 @@ export default function Dashboard({ onOpenKitchen }: DashboardProps) {
   const [manualCustomer, setManualCustomer] = useState('');
   const [manualPhone, setManualPhone] = useState('');
   const [manualAddress, setManualAddress] = useState('');
-  const [manualPayment, setManualPayment] = useState('Dinheiro');
+  const [manualPayment, setManualPayment] = useState('Cartão de crédito');
   const [manualShipping, setManualShipping] = useState('0.00');
   const [manualTotal, setManualTotal] = useState('');
   const [manualNotes, setManualNotes] = useState('');
@@ -255,10 +255,6 @@ export default function Dashboard({ onOpenKitchen }: DashboardProps) {
 
           <div className='top-card-grid'>
             <div className='small-card'>
-              <strong>Operador</strong>
-              <span>{username}</span>
-            </div>
-            <div className='small-card'>
               <strong>Pedidos pendentes</strong>
               <span>{pendingCount}</span>
             </div>
@@ -322,9 +318,8 @@ export default function Dashboard({ onOpenKitchen }: DashboardProps) {
               <div className='form-row'>
                 <label>Forma de pagamento</label>
                 <select value={manualPayment} onChange={(e) => setManualPayment(e.target.value)}>
-                  <option>Dinheiro</option>
                   <option>Cartão de crédito</option>
-                  <option>Cartão de débito</option>
+                  <option>Dinheiro</option>
                   <option>Pix</option>
                 </select>
               </div>
