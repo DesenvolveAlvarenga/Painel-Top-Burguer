@@ -65,9 +65,102 @@ export default function Dashboard({ onOpenKitchen }: DashboardProps) {
     }
   };
 
-  const handlePrint = async (order: Order) => {
-    await api.post(`/orders/${order.id}/print`);
-    window.alert('Ticket gerado no backend. Confira o log do servidor para o conteúdo.');
+  const openPrintWindow = (html: string) => {
+    const printWindow = window.open('', '_blank', 'width=420,height=640');
+    if (!printWindow) {
+      window.alert('Não foi possível abrir a janela de impressão. Verifique se o bloqueador de pop-ups está desativado.');
+      return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+  };
+
+  const buildPrintHtml = (order: Order, title = 'Recibo 58mm') => {
+    const itemsHtml = order.items
+      .map(
+        (item) =>
+          `<div class="print-item"><span>${item.quantity}x ${item.name}</span><span>${formatCurrency(item.total)}</span></div>`
+      )
+      .join('');
+
+    const notesHtml = order.notes
+      ? `<div class="print-section"><strong>OBS:</strong><div class="print-notes">${order.notes}</div></div>`
+      : '';
+
+    return `<!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8" />
+        <title>${title}</title>
+        <style>
+          body { margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; color: #000; background: #fff; }
+          .receipt { width: 58mm; padding: 8px 6px; font-size: 13px; line-height: 1.4; font-weight: 600; }
+          .receipt h1 { font-size: 18px; margin: 0 0 6px; text-align: center; letter-spacing: 0.04em; font-weight: 700; }
+          .receipt .center { text-align: center; }
+          .receipt .section { margin-bottom: 8px; }
+          .receipt .section strong { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; }
+          .receipt .section span { display: block; font-size: 12px; }
+          .print-item { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 4px; font-size: 12px; font-weight: 700; }
+          .print-item span:last-child { min-width: 36px; text-align: right; }
+          .print-divider { border-top: 1px dashed #000; margin: 8px 0; }
+          .print-section { margin-top: 6px; }
+          .print-section strong { font-size: 13px; font-weight: 800; }
+          .print-notes { font-size: 14px; margin-top: 5px; white-space: pre-wrap; font-weight: 700; line-height: 1.45; }
+          .footer { text-align: center; margin-top: 4px; font-size: 11px; font-weight: 700; }
+          .total-row { display: flex; justify-content: space-between; gap: 6px; font-weight: 700; margin-top: 6px; font-size: 13px; }
+          @page { size: 58mm auto; margin: 4mm; }
+          @media print {
+            body { margin: 0; }
+            .receipt { padding: 4mm 6mm; width: 58mm; }
+          }
+        </style>
+        <script>
+          window.onload = function() {
+            window.focus();
+            window.print();
+            window.onafterprint = function() {
+              window.close();
+            };
+          };
+        </script>
+      </head>
+      <body>
+        <div class="receipt">
+          <h1>TOP BURGUER DELIVERY</h1>
+          <div class="section center">
+            <span>${formatDate(order.date)}</span>
+            <span>Pedido #${order.number}</span>
+          </div>
+          <div class="print-divider"></div>
+          <div class="section">
+            <strong>Cliente</strong>
+            <span>${order.customerName}</span>
+            <span>${order.phone || 'Sem telefone'}</span>
+            <span>${order.address}</span>
+          </div>
+          <div class="print-divider"></div>
+          <div class="section">
+            <strong>Itens</strong>
+            ${itemsHtml}
+          </div>
+          <div class="print-divider"></div>
+          <div class="section">
+            <div class="total-row"><span>Entrega</span><span>${formatCurrency(order.deliveryFee)}</span></div>
+            <div class="total-row"><span>Total</span><span>${formatCurrency(order.total)}</span></div>
+          </div>
+          ${notesHtml}
+          <div class="footer">Obrigado pela preferência!</div>
+        </div>
+      </body>
+      </html>`;
+  };
+
+  const handlePrint = (order: Order) => {
+    const html = buildPrintHtml(order);
+    openPrintWindow(html);
   };
 
   const formatManualItems = () => {
@@ -134,74 +227,8 @@ export default function Dashboard({ onOpenKitchen }: DashboardProps) {
       return;
     }
 
-    const printWindow = window.open('', '_blank', 'width=400,height=600');
-    if (!printWindow) {
-      return;
-    }
-
-    const itemsHtml = manualOrder.items
-      .map(
-        (item) =>
-          `<div class="item-row"><span>${item.quantity}x ${item.name}</span><span>${formatCurrency(item.total)}</span></div>`
-      )
-      .join('');
-
-    const html = `<!DOCTYPE html>
-      <html lang="pt-BR">
-      <head>
-        <meta charset="UTF-8" />
-        <title>Recibo 58mm</title>
-        <style>
-          body { margin: 0; font-family: 'Courier New', Courier, monospace; color: #000; }
-          .receipt { width: 58mm; padding: 12px; }
-          .receipt h1 { font-size: 18px; text-align: center; margin: 0 0 10px; }
-          .receipt .info, .receipt .line, .receipt .footer { margin-bottom: 10px; }
-          .receipt .info span, .receipt .line span { display: block; }
-          .receipt .line { border-top: 1px dashed #000; padding-top: 8px; }
-          .item-row { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; margin-bottom: 4px; }
-          .item-row span:last-child { text-align: right; min-width: 70px; }
-          .total-line { display: flex; justify-content: space-between; font-weight: 900; margin-top: 10px; }
-          .footer { font-size: 11px; text-align: center; border-top: 1px dashed #000; padding-top: 8px; }
-          @media print { body { margin: 0; } .receipt { padding: 6px; } }
-        </style>
-      </head>
-      <body>
-        <div class="receipt">
-          <h1>Top Burguer Delivery</h1>
-          <div class="info">
-            <span>Pedido: ${manualOrder.number}</span>
-            <span>Cliente: ${manualOrder.customerName}</span>
-            <span>Telefone: ${manualOrder.phone}</span>
-            <span>Endereço: ${manualOrder.address}</span>
-            <span>Pagamento: ${manualOrder.paymentMethod}</span>
-            <span>Data: ${formatDate(manualOrder.date)}</span>
-          </div>
-          <div class="line">
-            ${itemsHtml}
-          </div>
-          <div class="total-line">
-            <span>Entrega</span>
-            <span>${formatCurrency(manualOrder.deliveryFee)}</span>
-          </div>
-          <div class="total-line">
-            <span>Total</span>
-            <span>${formatCurrency(manualOrder.total)}</span>
-          </div>
-          <div class="footer">
-            ${manualOrder.notes || 'Sem observações.'}
-          </div>
-          <div class="footer">Obrigado pela preferência!</div>
-        </div>
-      </body>
-      </html>`;
-
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 300);
+    const html = buildPrintHtml(manualOrder, 'Pedido manual');
+    openPrintWindow(html);
   };
 
   const orderDetail = useMemo(() => selected, [selected]);
@@ -352,35 +379,6 @@ export default function Dashboard({ onOpenKitchen }: DashboardProps) {
         </div>
 
         <div className='manual-preview-container'>
-          <div className='card order-list'>
-            <h2>Pedidos delivery</h2>
-            {loading ? (
-              <div className='loader'>Carregando pedidos...</div>
-            ) : orders.length === 0 ? (
-              <div className='empty'>Nenhum pedido encontrado.</div>
-            ) : (
-              orders.map((order) => (
-                <article
-                  key={order.id}
-                  className={`order-card ${order.status === 'novo' ? 'new-order' : ''} ${selected?.id === order.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedOrder(order)}>
-                  <div className='order-title'>
-                    <span>Pedido #{order.number}</span>
-                    <strong>{order.customerName}</strong>
-                  </div>
-                  <div className='order-meta'>
-                    <span>{order.phone}</span>
-                    <span>{formatDate(order.date)}</span>
-                  </div>
-                  <div className='order-state'>
-                    <span>{order.status.replace('_', ' ')}</span>
-                    <strong>{formatCurrency(order.total)}</strong>
-                  </div>
-                </article>
-              ))
-            )}
-          </div>
-
           <div className='card order-detail'>
             {orderDetail ? (
               <>
@@ -448,6 +446,37 @@ export default function Dashboard({ onOpenKitchen }: DashboardProps) {
               </>
             ) : (
               <div className='empty-detail'>Selecione um pedido para visualizar detalhes.</div>
+            )}
+          </div>
+
+          <div className='card order-list'>
+            <h2>Pedidos delivery</h2>
+            {loading ? (
+              <div className='loader'>Carregando pedidos...</div>
+            ) : orders.length === 0 ? (
+              <div className='empty'>Nenhum pedido encontrado.</div>
+            ) : (
+              <div className='order-list-grid'>
+                {orders.map((order) => (
+                  <article
+                    key={order.id}
+                    className={`order-card ${order.status === 'novo' ? 'new-order' : ''} ${selected?.id === order.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedOrder(order)}>
+                    <div className='order-title'>
+                      <span>Pedido #{order.number}</span>
+                      <strong>{order.customerName}</strong>
+                    </div>
+                    <div className='order-meta'>
+                      <span>{order.phone}</span>
+                      <span>{formatDate(order.date)}</span>
+                    </div>
+                    <div className='order-state'>
+                      <span>{order.status.replace('_', ' ')}</span>
+                      <strong>{formatCurrency(order.total)}</strong>
+                    </div>
+                  </article>
+                ))}
+              </div>
             )}
           </div>
         </div>

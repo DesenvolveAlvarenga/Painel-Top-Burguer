@@ -1,6 +1,28 @@
 {
-  "nextId": -2,
+  "nextId": -3,
   "orders": [
+    {
+      "number": "M-1783019155589",
+      "customerName": "Cliente sem nome",
+      "phone": "Não informado",
+      "address": "Endereço não informado",
+      "notes": "",
+      "paymentMethod": "Dinheiro",
+      "total": 25,
+      "deliveryFee": 0,
+      "coupon": "",
+      "items": [
+        {
+          "name": "X-Burguer",
+          "quantity": 1,
+          "total": 25
+        }
+      ],
+      "status": "novo",
+      "wooStatus": "manual",
+      "date": "2026-07-02T19:05:55.589Z",
+      "id": -2
+    },
     {
       "number": "M-1780077467902",
       "customerName": "Cliente sem nome",

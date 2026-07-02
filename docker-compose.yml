@@ -1,3 +1,26 @@
+# version: '3.9'
+# services:
+#   backend:
+#     build: ./backend
+#     ports:
+#       - '4000:4000'
+#     environment:
+#       - NODE_ENV=production
+#       - PORT=4000
+#     volumes:
+#       - ./backend:/app
+#   frontend:
+#     build: ./frontend
+#     ports:
+#       - '5173:5173'
+#     environment:
+#       - NODE_ENV=development
+#     volumes:
+#       - ./frontend:/app
+
+
+
+
 version: '3.9'
 services:
   backend:
@@ -9,11 +32,12 @@ services:
       - PORT=4000
     volumes:
       - ./backend:/app
-  frontend:
-    build: ./frontend
-    ports:
-      - '5173:5173'
-    environment:
-      - NODE_ENV=development
-    volumes:
-      - ./frontend:/app
+
+#  frontend:
+#    build: ./frontend
+#    ports:
+#      - '5173:5173'
+#    environment:
+#      - NODE_ENV=development
+#    volumes:
+#      - ./frontend:/app
